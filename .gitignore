@@ -1,0 +1,8 @@
+# Directories
+.vs/
+OpenGL/OpenGL/bin/
+OpenGL/OpenGL/bin-int/
+
+# Files
+*.user
+.DS_Store
