@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 
-#include "Render.h"
+#include "Renderer.h"
 #include "Shader.h"
 
 Shader::Shader(const std::string& filepath)
@@ -99,12 +99,22 @@ void Shader::Unbind() const
 	glUseProgram(0);
 }
 
+void Shader::SetUniform1i(const std::string& name, int value)
+{
+	glUniform1i(GetUniformLocation(name), value);
+}
+
+void Shader::SetUniform1f(const std::string& name, float value)
+{
+	glUniform1f(GetUniformLocation(name), value);
+}
+
 void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
 {
 	glUniform4f(GetUniformLocation(name), v0, v1, v2, v3);
 }
 
-unsigned int Shader::GetUniformLocation(const std::string& name)
+int Shader::GetUniformLocation(const std::string& name)
 {
 	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end()) {
 		return m_UniformLocationCache[name];
