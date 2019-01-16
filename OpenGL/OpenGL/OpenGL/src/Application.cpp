@@ -27,6 +27,7 @@
 
 #include "Texture.h"
 
+#include "tests/TestClearColor.h"
 
 int main(void)
 {
@@ -60,6 +61,7 @@ int main(void)
 	std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 
 	{ 
+		/*
 		float positions[] = {
 		   -50.0f, -50.0f, 0.0f, 0.0f, // 0
 		    50.0f, -50.0f, 1.0f, 0.0f, // 1
@@ -71,10 +73,12 @@ int main(void)
 			0, 1, 2,
 			2, 3, 0
 		};
+		*/
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+		/*
 		// 1. Vertex Array
 		VertexArray va;
 
@@ -109,6 +113,7 @@ int main(void)
 		vb.Unbind();
 		ib.Unbind();
 		shader.Unbind();
+		*/
 
 		Renderer renderer;
 		
@@ -117,27 +122,49 @@ int main(void)
 
 		ImGui::StyleColorsDark();
 
+		const char* glsl_version = "#version 150";
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 150");
+		ImGui_ImplOpenGL3_Init(glsl_version);
 
-
+		/*
 		float r = 0.0f;
 		float increment = 0.05f;
 		glm::vec3 translationA(200, 200, 0);
 		glm::vec3 translationB(400, 200, 0);
+		*/
+
+		test::Test* currentTest = nullptr;
+		test::TestMenu* testMenu = new test::TestMenu(currentTest);
+		currentTest = testMenu;
+
+		testMenu->RegisterTest<test::TestClearColor>("Clear Color");
 
 		/* Loop until the user closes the window */
 		while (!glfwWindowShouldClose(window))
 		{
 			/* Render here */
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.Clear();
 
 			// ImGui: Start the Dear ImGui frame
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplGlfw_NewFrame();
 			ImGui::NewFrame();
+			
+			if (currentTest)
+			{
+				currentTest->OnUpdate(0.0f);
+				currentTest->OnRender();
+				ImGui::Begin("Test");
+				if (currentTest != testMenu && ImGui::Button("<-")) {
+					delete currentTest;
+					currentTest = testMenu;
+				}
+				currentTest->OnImGuiRender();
+				ImGui::End();
+			}
 
-
+			/*
 			{
 				// shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 				glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
@@ -158,7 +185,7 @@ int main(void)
 
 				renderer.Draw(va, ib, shader);
 			}
-
+			
 
 			if (r > 1.0f) {
 				increment = -0.05f;
@@ -168,8 +195,9 @@ int main(void)
 				increment = 0.05f;
 			}
 			r += increment;
+           
 
-			// ImGui: Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+			// ImGui: Show a simple window that we create ourselves. 
 			{
 				static float f = 0.0f;
 
@@ -180,7 +208,8 @@ int main(void)
 
 				ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 				ImGui::End();
-			}
+			} 
+			*/
 
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -190,6 +219,10 @@ int main(void)
 
 			/* Poll for and process events */
 			glfwPollEvents();
+		}
+		delete currentTest;
+		if (currentTest != testMenu) {
+			delete testMenu;
 		}
 
 	}
