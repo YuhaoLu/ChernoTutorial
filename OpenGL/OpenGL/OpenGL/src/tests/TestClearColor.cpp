@@ -1,7 +1,7 @@
+#include "imgui/imgui.h"
+
 #include "Renderer.h"
 #include "TestClearColor.h"
-
-#include "imgui/imgui.h"
 
 namespace test {
 
